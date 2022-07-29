@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var animation: Animation
     lateinit var textView: TextView
     private lateinit var item: ArrayList<ItemModel>
+    lateinit var linearLayoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,8 @@ class MainActivity : AppCompatActivity() {
     private fun setRv() {
 
         rv = findViewById(R.id.rv)
-        rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        rv.layoutManager = linearLayoutManager
 
         val snapHelper: SnapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(rv)
@@ -53,20 +55,22 @@ class MainActivity : AppCompatActivity() {
 
         rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (newState == 0) {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, position: Int) {
+                var position = 0
+                position = linearLayoutManager.findFirstVisibleItemPosition()
+
+                if (position == 0) {
                     btn?.visibility = View.INVISIBLE
                     textView?.visibility = View.VISIBLE
-                } else if (newState == 1) {
+                } else if (position == 1) {
                     btn?.visibility = View.INVISIBLE
                     textView?.visibility = View.VISIBLE
                 } else {
-                    animation =
-                        AnimationUtils.loadAnimation(this@MainActivity, R.anim.animation)
-                    btn?.animation = animation
                     btn?.visibility = View.VISIBLE
                     textView?.visibility = View.INVISIBLE
                 }
+
+
             }
 
 
@@ -84,6 +88,8 @@ class MainActivity : AppCompatActivity() {
             )
         })
     }
+
+
 
     private fun getData() {
         item = ArrayList()
